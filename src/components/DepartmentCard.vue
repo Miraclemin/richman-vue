@@ -1,23 +1,41 @@
 <template>
-  <div style="text-align: center">
-    <el-transfer
-      style="text-align: left; display: inline-block"
-      v-model="value"
-      filterable
-      :left-default-checked="[2, 3]"
-      :right-default-checked="[1]"
-      :render-content="renderFunc"
-      :titles="['国家列表', '张大富翁']"
-      :button-texts="['移回', '归属']"
-      :format="{
+  <div>
+    <div>
+
+    </div>
+    <div style="text-align: center">
+      <el-transfer
+        style="text-align: left; display: inline-block"
+        v-model="value"
+        filterable
+        :render-content="renderFunc"
+        :titles="['国家列表', '张汉东']"
+        :button-texts="['移回', '归属']"
+        :format="{
         noChecked: '${total}',
         hasChecked: '${checked}/${total}'
       }"
-      @change="handleChange"
-      :data="data">
-      <el-button class="transfer-footer" slot="left-footer" size="small">操作</el-button>
-      <el-button class="transfer-footer" slot="right-footer" size="small">操作</el-button>
-    </el-transfer>
+        @change="handleChange"
+        :data="data">
+      </el-transfer>
+    </div>
+
+    <div style="text-align: center">
+      <el-transfer
+        style="text-align: left; display: inline-block"
+        v-model="value4"
+        filterable
+        :render-content="renderFunc"
+        :titles="['国家列表', '王涵民']"
+        :button-texts="['移回', '归属']"
+        :format="{
+        noChecked: '${total}',
+        hasChecked: '${checked}/${total}'
+      }"
+        @change="handleChange"
+        :data="data">
+      </el-transfer>
+    </div>
   </div>
 </template>
 
@@ -29,25 +47,26 @@
 </style>
 
 <script>
+import countryList from "../common/countryList"
 export default {
   data() {
     const generateData = _ => {
       const data = [];
-      const cities = ['中国', '日本', '美国', '俄罗斯', '比利时', '西班牙', '洪都拉斯'];
-      const pinyin = ['zhongguo', 'riben', 'meiguo', 'eluosi', 'bilishi', 'xibanya', 'hongdulasi'];
+      const cities = countryList
       cities.forEach((city, index) => {
         data.push({
           label: city,
-          key: index,
-          pinyin: pinyin[index]
+          key: city + index,
+          disabled: false
         });
       });
       return data;
     };
     return {
       data: generateData(),
-      value: [1],
-      value4: [1],
+      value: [-1],
+      value4: [-1],
+      text: 'hello',
       renderFunc(h, option) {
         return <span>{ option.label }</span>;
       }
@@ -56,7 +75,10 @@ export default {
 
   methods: {
     handleChange(value, direction, movedKeys) {
-      console.log(value, direction, movedKeys);
+      movedKeys.forEach(obj => {
+        let idx = this.data.findIndex(cur => cur.key === obj)
+        this.data[idx].disabled = true
+      })
     }
   }
 };
