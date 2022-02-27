@@ -3,7 +3,7 @@
     <div>
 
     </div>
-    <div style="text-align: center">
+    <div style="text-align: center; float: left">
       <el-transfer
         style="text-align: left; display: inline-block"
         v-model="value"
@@ -20,7 +20,7 @@
       </el-transfer>
     </div>
 
-    <div style="text-align: center">
+    <div style="text-align: center; float: right">
       <el-transfer
         style="text-align: left; display: inline-block"
         v-model="value4"
