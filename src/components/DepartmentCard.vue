@@ -1,16 +1,74 @@
 <template>
   <div>
     <div>
-
+      <template>
+        <el-table
+          :data="tableData"
+          style="width: 100%">
+          <el-table-column
+            prop="name"
+            label="姓名"
+            width="180">
+          </el-table-column>
+          <el-table-column
+            prop="cash"
+            label="现金（初始默认）"
+            width="180">
+          </el-table-column>
+          <el-table-column
+            prop="debt"
+            label="借贷（手动）"
+            width="180">
+          </el-table-column>
+          <el-table-column
+            prop="owe"
+            label="应还（自动计算）"
+            width="180">
+          </el-table-column>
+          <el-table-column
+            prop="country"
+            label="拥有国家（自动计算）"
+            width="180">
+          </el-table-column>
+          <el-table-column
+            prop="countryInImpawn"
+            label="抵押中国家（自动计算）"
+            width="180">
+          </el-table-column>
+          <el-table-column
+            prop="random"
+            label="随机事件（手动）"
+            width="180">
+          </el-table-column>
+          <el-table-column
+            prop="actualAsset"
+            label="实际总资产（自动计算）"
+            width="180">
+          </el-table-column>
+        </el-table>
+      </template>
     </div>
-    <div style="text-align: center; float: left">
+    <p style="text-align: center; margin: 20px 0 20px">国家归属</p>
+    <div style="text-align: center">
       <el-transfer
-        style="text-align: left; display: inline-block"
+        style="text-align: left; display: inline-block; float: left"
         v-model="value"
         filterable
         :render-content="renderFunc"
         :titles="['国家列表', '张汉东']"
-        :button-texts="['移回', '归属']"
+        :format="{
+        noChecked: '${total}',
+        hasChecked: '${checked}/${total}'
+      }"
+        @change="handleChange"
+        :data="data">
+      </el-transfer>
+      <el-transfer
+        style="text-align: left; display: inline-block; float: right"
+        v-model="value"
+        filterable
+        :render-content="renderFunc"
+        :titles="['张汉东', '抵押列表']"
         :format="{
         noChecked: '${total}',
         hasChecked: '${checked}/${total}'
@@ -19,15 +77,28 @@
         :data="data">
       </el-transfer>
     </div>
-
-    <div style="text-align: center; float: right">
+<!--    <div><el-divider></el-divider></div>-->
+    <div style="text-align: center">
       <el-transfer
-        style="text-align: left; display: inline-block"
+        style="text-align: left; display: inline-block; float: left"
         v-model="value4"
         filterable
         :render-content="renderFunc"
         :titles="['国家列表', '王涵民']"
-        :button-texts="['移回', '归属']"
+        :format="{
+        noChecked: '${total}',
+        hasChecked: '${checked}/${total}'
+      }"
+        @change="handleChange"
+        :data="data">
+      </el-transfer>
+
+      <el-transfer
+        style="text-align: left; display: inline-block; float: right"
+        v-model="value4"
+        filterable
+        :render-content="renderFunc"
+        :titles="['王涵民', '抵押列表']"
         :format="{
         noChecked: '${total}',
         hasChecked: '${checked}/${total}'
@@ -69,7 +140,16 @@ export default {
       text: 'hello',
       renderFunc(h, option) {
         return <span>{ option.label }</span>;
-      }
+      },
+      tableData: [{
+        name: '张汉东',
+        totalMoney: 800,
+        loadMoney: 100
+      }, {
+        name: '王涵民',
+        totalMoney: 200,
+        loadMoney: 100
+      }]
     };
   },
 
