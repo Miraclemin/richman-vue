@@ -60,7 +60,7 @@
         noChecked: '${total}',
         hasChecked: '${checked}/${total}'
       }"
-        @change="handleChangeCountryBelong"
+        @change="handleChangeCountryBelongByA"
         :data="data">
       </el-transfer>
       <el-transfer
@@ -73,7 +73,7 @@
         noChecked: '${total}',
         hasChecked: '${checked}/${total}'
       }"
-        @change="handleChange"
+        @change="handleChangeCountryImpawnByA"
         :data="dataAImpawn">
       </el-transfer>
     </div>
@@ -89,7 +89,7 @@
         noChecked: '${total}',
         hasChecked: '${checked}/${total}'
       }"
-        @change="handleChangeCountryBelong"
+        @change="handleChangeCountryBelongByB"
         :data="data">
       </el-transfer>
 
@@ -103,7 +103,7 @@
         noChecked: '${total}',
         hasChecked: '${checked}/${total}'
       }"
-        @change="handleChange"
+        @change="handleChangeCountryImpawnByB"
         :data="dataBImpawn">
       </el-transfer>
     </div>
@@ -168,13 +168,27 @@ export default {
   },
 
   methods: {
-    handleChangeCountryBelong(value, direction, movedKeys) {
+    handleChangeCountryBelongByA(value, direction, movedKeys) {
+      movedKeys.forEach(obj => {
+        let idx = this.data.findIndex(cur => cur.key === obj)
+        this.dataAImpawn.push(JSON.parse(JSON.stringify(this.data[idx])))
+        this.data[idx].disabled = true
+      })
+    },
+    handleChangeCountryBelongByB(value, direction, movedKeys) {
+      movedKeys.forEach(obj => {
+        let idx = this.data.findIndex(cur => cur.key === obj)
+        this.dataBImpawn.push(JSON.parse(JSON.stringify(this.data[idx])))
+        this.data[idx].disabled = true
+      })
+    },
+    handleChangeCountryImpawnByA(value, direction, movedKeys) {
       movedKeys.forEach(obj => {
         let idx = this.data.findIndex(cur => cur.key === obj)
         this.data[idx].disabled = true
       })
     },
-    handleChangeCountryImpawn(value, direction, movedKeys) {
+    handleChangeCountryImpawnByB(value, direction, movedKeys) {
       movedKeys.forEach(obj => {
         let idx = this.data.findIndex(cur => cur.key === obj)
         this.data[idx].disabled = true
