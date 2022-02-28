@@ -52,7 +52,7 @@
     <div style="text-align: center">
       <el-transfer
         style="text-align: left; display: inline-block; float: left"
-        v-model="value"
+        v-model="valueA"
         filterable
         :render-content="renderFunc"
         :titles="['国家列表', '张汉东']"
@@ -60,28 +60,28 @@
         noChecked: '${total}',
         hasChecked: '${checked}/${total}'
       }"
-        @change="handleChange"
+        @change="handleChangeCountryBelong"
         :data="data">
       </el-transfer>
       <el-transfer
         style="text-align: left; display: inline-block; float: right"
-        v-model="value"
+        v-model="valueAImpawn"
         filterable
         :render-content="renderFunc"
-        :titles="['张汉东', '抵押列表']"
+        :titles="['张汉东可抵押', '已抵押']"
         :format="{
         noChecked: '${total}',
         hasChecked: '${checked}/${total}'
       }"
         @change="handleChange"
-        :data="data">
+        :data="dataAImpawn">
       </el-transfer>
     </div>
 <!--    <div><el-divider></el-divider></div>-->
     <div style="text-align: center">
       <el-transfer
         style="text-align: left; display: inline-block; float: left"
-        v-model="value4"
+        v-model="valueB"
         filterable
         :render-content="renderFunc"
         :titles="['国家列表', '王涵民']"
@@ -89,22 +89,22 @@
         noChecked: '${total}',
         hasChecked: '${checked}/${total}'
       }"
-        @change="handleChange"
+        @change="handleChangeCountryBelong"
         :data="data">
       </el-transfer>
 
       <el-transfer
         style="text-align: left; display: inline-block; float: right"
-        v-model="value4"
+        v-model="valueBImpawn"
         filterable
         :render-content="renderFunc"
-        :titles="['王涵民', '抵押列表']"
+        :titles="['王涵民可抵押', '已抵押']"
         :format="{
         noChecked: '${total}',
         hasChecked: '${checked}/${total}'
       }"
         @change="handleChange"
-        :data="data">
+        :data="dataBImpawn">
       </el-transfer>
     </div>
   </div>
@@ -135,8 +135,12 @@ export default {
     };
     return {
       data: generateData(),
-      value: [-1],
-      value4: [-1],
+      dataAImpawn: [],
+      dataBImpawn: [],
+      valueA: [-1],
+      valueB: [-1],
+      valueAImpawn: [],
+      valueBImpawn: [],
       text: 'hello',
       renderFunc(h, option) {
         return <span>{ option.label }</span>;
@@ -164,7 +168,13 @@ export default {
   },
 
   methods: {
-    handleChange(value, direction, movedKeys) {
+    handleChangeCountryBelong(value, direction, movedKeys) {
+      movedKeys.forEach(obj => {
+        let idx = this.data.findIndex(cur => cur.key === obj)
+        this.data[idx].disabled = true
+      })
+    },
+    handleChangeCountryImpawn(value, direction, movedKeys) {
       movedKeys.forEach(obj => {
         let idx = this.data.findIndex(cur => cur.key === obj)
         this.data[idx].disabled = true
