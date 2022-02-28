@@ -143,12 +143,22 @@ export default {
       },
       tableData: [{
         name: '张汉东',
-        totalMoney: 800,
-        loadMoney: 100
+        cash: 800,
+        debt: 100,
+        owe: 110,
+        country: 3,
+        countryInImpawn: 2,
+        random: 0,
+        actualAsset: 690
       }, {
         name: '王涵民',
-        totalMoney: 200,
-        loadMoney: 100
+        cash: 800,
+        debt: 100,
+        owe: 110,
+        country: 3,
+        countryInImpawn: 2,
+        random: 0,
+        actualAsset: 690
       }]
     };
   },
