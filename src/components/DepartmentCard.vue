@@ -62,10 +62,16 @@
       </template>
     </div>
 <!--    <p style="text-align: center; margin: 20px 0 20px">国家归属</p>-->
+    <el-autocomplete
+      v-model="state"
+      :fetch-suggestions="querySearchAsync"
+      placeholder="请输入内容"
+      @select="handleSelect"
+    ></el-autocomplete>
     <el-button style="text-align: center; margin: 20px 0 20px" size="mini" @click="handleReleaseForbidden">禁用/解除</el-button>
     <div style="text-align: center">
       <el-transfer
-        style="text-align: left; display: inline-block; float: left"
+        style="text-align: left; display: inline-block;"
         v-model="valueA"
         filterable
         :render-content="renderFunc"
@@ -79,7 +85,7 @@
 
       </el-transfer>
       <el-transfer
-        style="text-align: left; display: inline-block; float: right"
+        style="text-align: left; display: inline-block;"
         v-model="valueAImpawn"
         filterable
         :render-content="renderFunc"
@@ -95,7 +101,7 @@
 <!--    <div><el-divider></el-divider></div>-->
     <div style="text-align: center">
       <el-transfer
-        style="text-align: left; display: inline-block; float: left"
+        style="text-align: left; display: inline-block;"
         v-model="valueB"
         filterable
         :render-content="renderFunc"
@@ -109,7 +115,7 @@
       </el-transfer>
 
       <el-transfer
-        style="text-align: left; display: inline-block; float: right"
+        style="text-align: left; display: inline-block;"
         v-model="valueBImpawn"
         filterable
         :render-content="renderFunc"
@@ -158,6 +164,9 @@ export default {
       valueAImpawn: [],
       valueBImpawn: [],
       disableAll: true,
+      state: '',
+      allCountry: [],
+      timeout: null,
       renderFunc(h, option) {
         return <span>{ option.label }</span>;
       },
@@ -252,7 +261,36 @@ export default {
       this.data.forEach(obj => {
         obj.disabled = this.disableAll
       })
+    },
+    querySearchAsync(queryString, cb) {
+      var countries = this.allCountry;
+      var results = queryString ? countries.filter(this.createStateFilter(queryString)) : countries;
+      console.log("results", results)
+      cb(results);
+      // clearTimeout(this.timeout);
+      setTimeout(() => {
+        cb(results);
+      }, 1000);
+    },
+    createStateFilter(queryString) {
+      return (state) => {
+        console.log(queryString)
+        return (state.value.indexOf(queryString) === 0);
+      };
+    },
+    handleSelect(item) {
+      console.log(item);
     }
   },
+  mounted() {
+    const data = []
+    const cities = countryList
+    cities.forEach((city, index) => {
+      data.push({
+        value: city.name,
+      });
+    });
+    this.allCountry = data
+  }
 };
 </script>
