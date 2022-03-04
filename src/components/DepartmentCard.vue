@@ -62,11 +62,19 @@
       </template>
     </div>
 <!--    <p style="text-align: center; margin: 20px 0 20px">国家归属</p>-->
+    zhd
     <el-autocomplete
-      v-model="state"
+      v-model="stateA"
       :fetch-suggestions="querySearchAsync"
-      placeholder="请输入内容"
-      @select="handleSelect"
+      placeholder="请输入zhd经过的国家"
+      @select="handleSelectA"
+    ></el-autocomplete>
+    whm
+    <el-autocomplete
+      v-model="stateB"
+      :fetch-suggestions="querySearchAsync"
+      placeholder="请输入whm经过的国家"
+      @select="handleSelectB"
     ></el-autocomplete>
     <el-button style="text-align: center; margin: 20px 0 20px" size="mini" @click="handleReleaseForbidden">禁用/解除</el-button>
     <div style="text-align: center">
@@ -164,9 +172,9 @@ export default {
       valueAImpawn: [],
       valueBImpawn: [],
       disableAll: true,
-      state: '',
+      stateA: '',
+      stateB: '',
       allCountry: [],
-      timeout: null,
       renderFunc(h, option) {
         return <span>{ option.label }</span>;
       },
@@ -194,27 +202,127 @@ export default {
 
   methods: {
     handleChangeCountryBelongByA(value, direction, movedKeys) {
-      movedKeys.forEach(obj => {
-        let idx = this.data.findIndex(cur => cur.key === obj)
-        this.dataAImpawn.push(JSON.parse(JSON.stringify(this.data[idx])))
-        this.data[idx].disabled = true
-      })
+
       if (direction === 'right') {
-        this.tableData[0].country += movedKeys.length
+
+        movedKeys.forEach(obj => {
+          let idx = this.data.findIndex(cur => cur.key === obj)
+          this.allCountry.find(obj => {
+            if (obj.value === this.data[idx].label) {
+              obj.originalObj.status.owner = 'zhd'
+              this.tableData[0].cash -= obj.originalObj.countryCost
+              return true
+            }
+          })
+        })
+
+        if (this.tableData[0].cash < 0) {
+          this.$message({
+            message: '无法支付国家购买费用!!!',
+            type: 'error',
+            duration: 5000
+          });
+          movedKeys.forEach(obj => {
+            let idx = this.data.findIndex(cur => cur.key === obj)
+            this.valueA.pop()
+            this.allCountry.find(obj => {
+              if (obj.value === this.data[idx].label) {
+                obj.originalObj.status.owner = ''
+                this.tableData[0].cash += obj.originalObj.countryCost
+                return true
+              }
+            })
+          })
+          console.log("valueA", this.valueA)
+        } else {
+          this.tableData[0].country += movedKeys.length
+          movedKeys.forEach(obj => {
+            let idx = this.data.findIndex(cur => cur.key === obj)
+            this.dataAImpawn.push(JSON.parse(JSON.stringify(this.data[idx])))
+            this.data[idx].disabled = true
+
+            this.$message({
+              message: '张汉东购买了' + this.data[idx].label,
+              type: 'success',
+              duration: 5000
+            });
+          })
+
+        }
       } else if (direction === 'left') {
         this.tableData[0].country -= movedKeys.length
+
+        movedKeys.forEach(obj => {
+          let idx = this.data.findIndex(cur => cur.key === obj)
+          this.allCountry.find(obj => {
+            if (obj.value === this.data[idx].label) {
+              obj.originalObj.status.owner = ''
+              this.tableData[0].cash += obj.originalObj.countryCost
+              return true
+            }
+          })
+        })
       }
     },
     handleChangeCountryBelongByB(value, direction, movedKeys) {
-      movedKeys.forEach(obj => {
-        let idx = this.data.findIndex(cur => cur.key === obj)
-        this.dataBImpawn.push(JSON.parse(JSON.stringify(this.data[idx])))
-        this.data[idx].disabled = true
-      })
       if (direction === 'right') {
-        this.tableData[1].country += movedKeys.length
+
+        movedKeys.forEach(obj => {
+          let idx = this.data.findIndex(cur => cur.key === obj)
+          this.allCountry.find(obj => {
+            if (obj.value === this.data[idx].label) {
+              obj.originalObj.status.owner = 'whm'
+              this.tableData[1].cash -= obj.originalObj.countryCost
+              return true
+            }
+          })
+        })
+
+        if (this.tableData[1].cash < 0) {
+          this.$message({
+            message: '无法支付国家购买费用!!!',
+            type: 'error',
+            duration: 5000
+          });
+          movedKeys.forEach(obj => {
+            let idx = this.data.findIndex(cur => cur.key === obj)
+            this.valueB.pop()
+            this.allCountry.find(obj => {
+              if (obj.value === this.data[idx].label) {
+                obj.originalObj.status.owner = ''
+                this.tableData[1].cash += obj.originalObj.countryCost
+                return true
+              }
+            })
+          })
+          console.log("valueB", this.valueB)
+        } else {
+          this.tableData[1].country += movedKeys.length
+          movedKeys.forEach(obj => {
+            let idx = this.data.findIndex(cur => cur.key === obj)
+            this.dataBImpawn.push(JSON.parse(JSON.stringify(this.data[idx])))
+            this.data[idx].disabled = true
+
+            this.$message({
+              message: '王涵民购买了' + this.data[idx].label,
+              type: 'success',
+              duration: 5000
+            });
+          })
+        }
       } else if (direction === 'left') {
         this.tableData[1].country -= movedKeys.length
+
+        movedKeys.forEach(obj => {
+          let idx = this.data.findIndex(cur => cur.key === obj)
+          this.allCountry.find(obj => {
+            if (obj.value === this.data[idx].label) {
+              obj.originalObj.status.owner = ''
+              this.tableData[1].cash += obj.originalObj.countryCost
+              return true
+            }
+          })
+        })
       }
     },
     handleChangeCountryImpawnByA(value, direction, movedKeys) {
@@ -223,6 +331,20 @@ export default {
           let idx = this.data.findIndex(cur => cur.key === obj)
           this.tableData[0].cash += this.data[idx].original.impawn
           this.tableData[0].actualAsset += this.data[idx].original.impawn
+
+          this.allCountry.find(obj => {
+            if (obj.value === this.data[idx].label) {
+              obj.originalObj.status.isImpawn = true
+              return true
+            }
+          })
+
+          this.$message({
+            message: '张汉东抵押了' + this.data[idx].label,
+            type: 'success',
+            duration: 5000
+          });
+
         })
         this.tableData[0].countryInImpawn += movedKeys.length
       } else if (direction === 'left') {
@@ -230,6 +352,18 @@ export default {
           let idx = this.data.findIndex(cur => cur.key === obj)
           this.tableData[0].cash -= this.data[idx].original.impawn
           this.tableData[0].actualAsset -= this.data[idx].original.impawn
+
+          this.allCountry.find(obj => {
+            if (obj.value === this.data[idx].label) {
+              obj.originalObj.status.isImpawn = false
+              return true
+            }
+          })
+          this.$message({
+            message: '张汉东赎回' + this.data[idx].label,
+            type: 'success',
+            duration: 5000
+          });
         })
         this.tableData[0].countryInImpawn -= movedKeys.length
       }
@@ -240,6 +374,18 @@ export default {
           let idx = this.data.findIndex(cur => cur.key === obj)
           this.tableData[1].cash += this.data[idx].original.impawn
           this.tableData[1].actualAsset += this.data[idx].original.impawn
+
+          this.allCountry.find(obj => {
+            if (obj.value === this.data[idx].label) {
+              obj.originalObj.status.isImpawn = true
+              return true
+            }
+          })
+          this.$message({
+            message: '王涵民抵押了' + this.data[idx].label,
+            type: 'success',
+            duration: 5000
+          });
         })
         this.tableData[1].countryInImpawn += movedKeys.length
       } else if (direction === 'left') {
@@ -247,6 +393,19 @@ export default {
           let idx = this.data.findIndex(cur => cur.key === obj)
           this.tableData[1].cash -= this.data[idx].original.impawn
           this.tableData[1].actualAsset -= this.data[idx].original.impawn
+
+          this.allCountry.find(obj => {
+            if (obj.value === this.data[idx].label) {
+              obj.originalObj.status.isImpawn = false
+              return true
+            }
+          })
+
+          this.$message({
+            message: '王涵民赎回' + this.data[idx].label,
+            type: 'success',
+            duration: 5000
+          });
         })
         this.tableData[1].countryInImpawn -= movedKeys.length
       }
@@ -267,10 +426,6 @@ export default {
       var results = queryString ? countries.filter(this.createStateFilter(queryString)) : countries;
       console.log("results", results)
       cb(results);
-      // clearTimeout(this.timeout);
-      setTimeout(() => {
-        cb(results);
-      }, 1000);
     },
     createStateFilter(queryString) {
       return (state) => {
@@ -278,8 +433,142 @@ export default {
         return (state.value.indexOf(queryString) === 0);
       };
     },
-    handleSelect(item) {
-      console.log(item);
+    handleSelectA(item) {
+      console.log("choose", item.value);
+      var res = this.allCountry.find((country) => {
+        if (country.value === item.value) {
+          if (country.originalObj.status.owner === 'zhd') {
+            if (country.originalObj.status.stage < 5) {
+              let cost = this.getBuildCost(country.value, country.originalObj.status.stage +1)
+              if (this.tableData[0].cash > cost) {
+                country.originalObj.status.stage += 1
+                this.tableData[0].cash -= cost;
+                this.$message({
+                  message: "张汉东在" + country.value + "建造了一座房产",
+                  type: 'success'
+                });
+              } else {
+                this.$message({
+                  message: "无力支付在" + country.value + "建造房产",
+                  type: 'warning'
+                });
+              }
+            }
+          } else if (country.originalObj.status.owner === 'whm'){
+            let cost = this.getRoadCostByCountryAndStage(country.value, country.originalObj.status.stage)
+            if (!country.originalObj.status.isImpawn) {
+              if (this.tableData[0].cash < cost) {
+                this.tableData[0].cash -= cost
+                this.$message({
+                  message: '张汉东破产!!!',
+                  type: 'error',
+                  duration: 0
+                });
+              } else {
+                this.tableData[0].cash -= cost
+                this.$message({
+                  message: '张汉东扣除' + cost,
+                  type: 'warning'
+                });
+              }
+            } else {
+              this.$message({
+                message: '王涵民的' + country.value + '已被抵押！不扣费',
+                type: 'warning'
+              });
+            }
+          }
+          return true;
+        }
+      })
+      console.log("res", res)
+
+      console.log(this.allCountry)
+
+    },
+    handleSelectB(item) {
+      console.log("choose", item.value);
+      var res = this.allCountry.find((country) => {
+        if (country.value === item.value) {
+          if (country.originalObj.status.owner === 'whm') {
+            if (country.originalObj.status.stage < 5) {
+              let cost = this.getBuildCost(country.value, country.originalObj.status.stage +1)
+              if (this.tableData[1].cash > cost) {
+                country.originalObj.status.stage += 1
+                this.tableData[1].cash -= cost;
+                this.$message({
+                  message: "王涵民在" + country.value + "建造了一座房产",
+                  type: 'success'
+                });
+              } else {
+                this.$message({
+                  message: "无力支付在" + country.value + "建造房产",
+                  type: 'warning'
+                });
+              }
+            }
+          } else if (country.originalObj.status.owner === 'zhd'){
+            let cost = this.getRoadCostByCountryAndStage(country.value, country.originalObj.status.stage)
+            if (!country.originalObj.status.isImpawn) {
+              if (this.tableData[1].cash < cost) {
+                this.tableData[1].cash -= cost
+                this.$message({
+                  message: '王涵民破产!!!',
+                  type: 'error',
+                  duration: 0
+                });
+              } else {
+                this.tableData[1].cash -= cost
+                this.$message({
+                  message: '王涵民扣除' + cost,
+                  type: 'warning'
+                });
+              }
+            } else {
+              this.$message({
+                message: '张汉东的' + country.value + '已被抵押！不扣费',
+                type: 'warning'
+              });
+            }
+
+          }
+          return true;
+        }
+      })
+      console.log("res", res)
+
+      console.log(this.allCountry)
+    },
+    getRoadCostByCountryAndStage(name, stage) {
+      var obj = countryList.find(obj => {
+        return obj.name === name
+      })
+      switch (stage) {
+        case 0:
+          return obj.stage0
+        case 1:
+          return obj.stage1
+        case 2:
+          return obj.stage2
+        case 3:
+          return obj.stage3
+        case 4:
+          return obj.stage4
+        case 5:
+          return obj.stage5
+        default:
+          return 0
+      }
+    },
+    getBuildCost(name, stage){
+      var obj = countryList.find(obj => {
+        return obj.name === name
+      })
+      if (stage < 5) {
+        return obj.roomCost
+      } else {
+        return obj.hotelCost
+      }
     }
   },
   mounted() {
@@ -288,6 +577,7 @@ export default {
     cities.forEach((city, index) => {
       data.push({
         value: city.name,
+        originalObj: city,
       });
     });
     this.allCountry = data

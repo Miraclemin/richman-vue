@@ -2,12 +2,14 @@
 const countryList = [
   {
     name: '中国',
+    countryCost: 500,
     impawn: 2000,
     status: {
       owner: '',
       isImpawn: false,
-      stage: 1
+      stage: 0
     },
+    stage0: 200,
     stage1: 300,
     stage2: 400,
     stage3: 500,
@@ -18,12 +20,14 @@ const countryList = [
   },
   {
     name: '日本',
+    countryCost: 700,
     impawn: 2000,
     status: {
       owner: '',
       isImpawn: false,
-      stage: 1
+      stage: 0
     },
+    stage0: 200,
     stage1: 300,
     stage2: 400,
     stage3: 500,
@@ -34,12 +38,14 @@ const countryList = [
   },
   {
     name: '英国',
+    countryCost: 1500,
     impawn: 2000,
     status: {
       owner: '',
       isImpawn: false,
-      stage: 1
+      stage: 0
     },
+    stage0: 200,
     stage1: 300,
     stage2: 400,
     stage3: 500,
